@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "curso_proknowc"
+version = "0.1.0"
+description = "Automações do curso ProKnow-C com Python"
+requires-python = ">=3.10"
+dependencies = [
+    "pandas",
+    "pyarrow",
+    "pyyaml",
+    "rapidfuzz",
+    "requests",
+    "matplotlib",
+    "networkx",
+    "pyvis",
+    "ipywidgets",
+    "scikit-learn",
+]
+
+[project.optional-dependencies]
+teste = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+curso_proknowc = ["perfis/*.yaml"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

@@ -1,0 +1,25 @@
+# Perfil da Scopus (exportação em CSV).
+# Conferir os cabeçalhos com uma exportação real antes do curso.
+nome: Scopus
+formato_autores: scopus          # "Silva J.; Santos M.A."
+citacao_vazia_e_zero: true       # a Scopus deixa "Cited by" vazio quando não há citações
+assinatura:                      # colunas que precisam existir para reconhecer o arquivo
+  - Title
+  - Source title
+  - Cited by
+  - EID
+colunas:                         # campo do esquema: coluna da base
+  titulo: Title
+  autores: Authors
+  autores_ids: Author(s) ID
+  ano: Year
+  periodico: Source title
+  issn: ISSN
+  doi: DOI
+  resumo: Abstract
+  palavras_chave_autor: Author Keywords
+  palavras_chave_indexadas: Index Keywords
+  citacoes: Cited by
+  tipo_documento: Document Type
+  idioma: Language of Original Document
+  referencias_texto: References

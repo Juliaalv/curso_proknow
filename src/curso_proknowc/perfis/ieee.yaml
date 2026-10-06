@@ -1,0 +1,21 @@
+# Perfil da IEEE Xplore (exportação em CSV).
+# Conferir os cabeçalhos com uma exportação real antes do curso.
+nome: IEEE Xplore
+formato_autores: ieee            # "Maria A. Santos; Jean-Pierre Dupont"
+citacao_vazia_e_zero: true       # conferir com exportação real
+assinatura:
+  - Document Title
+  - Publication Title
+  - Document Identifier
+colunas:
+  titulo: Document Title
+  autores: Authors
+  ano: Publication Year
+  periodico: Publication Title
+  issn: ISSN
+  doi: DOI
+  resumo: Abstract
+  palavras_chave_autor: Author Keywords
+  palavras_chave_indexadas: IEEE Terms
+  citacoes: Article Citation Count
+  tipo_documento: Document Identifier
