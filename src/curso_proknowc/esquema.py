@@ -51,6 +51,7 @@ COLUNAS_LISTA = [
     "referencias",
     "bases_origem",
     "arquivos_origem",
+    "autores_grupo_a",
 ]
 
 # Dicionários com chaves que variam de linha para linha: guardados como JSON no Parquet.

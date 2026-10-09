@@ -109,3 +109,12 @@ def test_exportar_bibtex(tmp_path):
     assert "title = {Wind \\& LSTM forecasting}" in texto
     assert "doi = {10.1/a}" in texto
     assert "booktitle = {Proc. Conference}" in texto
+
+
+def test_exportar_portfolio_recarregado_com_repescado(tmp_path):
+    portfolio = _portfolio()
+    portfolio["autores_grupo_a"] = [["Silva, J.", "Santos, M."], None]
+    esquema.salvar(portfolio, tmp_path / "portfolio.parquet")
+    recarregado = esquema.carregar(tmp_path / "portfolio.parquet")
+    assert "AU  - Silva, J." in rastreabilidade.exportar_ris(recarregado, tmp_path / "p.ris").read_text(encoding="utf-8")
+    assert "@article{silva2022," in rastreabilidade.exportar_bibtex(recarregado, tmp_path / "p.bib").read_text(encoding="utf-8")
