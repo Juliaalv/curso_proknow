@@ -114,3 +114,26 @@ def test_texto_de_lista_e_dicionario_no_csv(pastas):
     colab.salvar(pastas, tabela, "x")
     csv = pd.read_csv(pastas.resultados / "x.csv")
     assert json.loads(csv.loc[0, "citacoes_por_base"]) == {"scopus": 4}
+
+
+@pytest.mark.parametrize("fonte", ["resultados", "notebooks\curso_proknowc\entrada", ""])
+def test_fonte_fora_das_opcoes_explica_o_que_escolher(pastas, fonte):
+    with pytest.raises(ValueError, match="escolha na lista"):
+        colab.pasta_entrada(pastas, fonte)
+    with pytest.raises(ValueError, match="escolha na lista"):
+        colab.carregar(pastas, fonte, "02_padronizado", notebook="03")
+
+
+def test_falha_ao_conectar_o_drive_explica_o_que_fazer(tmp_path, monkeypatch):
+    import sys
+    import types
+
+    def mount(_):
+        raise RuntimeError("credential propagation was unsuccessful")
+
+    colab_falso = types.ModuleType("google.colab")
+    colab_falso.drive = types.SimpleNamespace(mount=mount)
+    monkeypatch.setitem(sys.modules, "google", types.ModuleType("google"))
+    monkeypatch.setitem(sys.modules, "google.colab", colab_falso)
+    with pytest.raises(SystemExit, match="janela normal"):
+        colab.preparar()

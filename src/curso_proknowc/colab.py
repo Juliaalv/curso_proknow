@@ -42,7 +42,14 @@ def preparar(raiz=None, exemplo=None) -> Pastas:
         if no_colab():
             from google.colab import drive
 
-            drive.mount(str(DRIVE))
+            try:
+                drive.mount(str(DRIVE))
+            except Exception as erro:
+                raise SystemExit(
+                    "Não consegui conectar ao Google Drive. Abra o notebook numa janela normal do navegador "
+                    "(a janela anônima bloqueia a conexão), rode esta célula de novo e, na tela de permissões "
+                    "do Google, marque todas as caixas antes de clicar em Continuar."
+                ) from erro
             raiz = DRIVE / "MyDrive" / "curso_proknowc"
         else:
             raiz = Path.cwd() / "curso_proknowc"
@@ -66,12 +73,22 @@ def ler_eixos(pares) -> dict:
     }
 
 
+def _conferir_fonte(fonte: str) -> None:
+    if fonte not in (EXEMPLO, MEUS_ARQUIVOS):
+        raise ValueError(
+            f'FONTE = "{fonte}" não é uma opção: escolha na lista do formulário "{EXEMPLO}" ou "{MEUS_ARQUIVOS}" '
+            "(não digite o caminho de uma pasta)."
+        )
+
+
 def pasta_entrada(pastas: Pastas, fonte: str) -> Path:
     """Pasta com os CSVs das bases: a do aluno ou a de reserva do curso."""
+    _conferir_fonte(fonte)
     return pastas.exemplo / "exemplo_bruto" if fonte == EXEMPLO else pastas.entrada
 
 
 def _pasta_resultados(pastas: Pastas, fonte: str) -> Path:
+    _conferir_fonte(fonte)
     return pastas.exemplo / "exemplo_processado" if fonte == EXEMPLO else pastas.resultados
 
 

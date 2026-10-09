@@ -62,6 +62,7 @@ def entrada(nome: str, notebook: str, variavel: str, padrao: str = "exemplo do c
         f'''
 #@markdown **exemplo do curso**: começa do resultado já pronto do exemplo (curtailment de eólica e solar).
 #@markdown **meus arquivos**: começa do resultado que você salvou no notebook anterior.{nota_email}
+#@markdown **FONTE**: escolha uma das opções na lista (não digite o caminho de uma pasta).
 FONTE = "{padrao}" #@param ["exemplo do curso", "meus arquivos"]{campo_email}
 {variavel} = colab.carregar(pastas, FONTE, "{nome}", notebook="{notebook}")
 print(f"{{len({variavel})}} artigos carregados.")
@@ -127,6 +128,7 @@ Não precisa renomear: o que importa é a pasta.
         formulario("Leitura dos arquivos", '''
 #@markdown **meus arquivos**: os CSVs que você colocou em `curso_proknowc/entrada/` no Google Drive.
 #@markdown **exemplo do curso**: os CSVs de reserva do curso (tema curtailment de eólica e solar).
+#@markdown **FONTE**: escolha uma das opções na lista (não digite o caminho de uma pasta).
 FONTE = "meus arquivos" #@param ["meus arquivos", "exemplo do curso"]
 from curso_proknowc.leitura import ler_pasta
 tabela_bruta, arquivos = ler_pasta(colab.pasta_entrada(pastas, FONTE))
@@ -375,6 +377,7 @@ print(f"{incluidas} referência(s) incorporada(s). Portfólio final: {len(portfo
 '''),
         texto("## Análise bibliométrica"),
         formulario("Periódicos, autores, palavras-chave e anos", '''
+#@markdown **QUANTOS_NO_GRAFICO**: quantos itens mostrar em cada gráfico de periódicos, autores e palavras-chave (os mais frequentes primeiro).
 QUANTOS_NO_GRAFICO = 10 #@param {type:"integer"}
 for coluna in ["periodico", "autores", "palavras_chave"]:
     bibliometria.grafico_frequencias(portfolio_final, coluna, QUANTOS_NO_GRAFICO)
@@ -396,6 +399,7 @@ e exportação do portfólio para o Zotero ou o Mendeley.
         preparacao(),
         formulario("Entrada", '''
 #@markdown **exemplo do curso**: o histórico e o portfólio do exemplo. **meus arquivos**: o que você salvou nos notebooks anteriores.
+#@markdown **FONTE**: escolha uma das opções na lista (não digite o caminho de uma pasta).
 FONTE = "exemplo do curso" #@param ["exemplo do curso", "meus arquivos"]
 portfolio = colab.carregar(pastas, FONTE, "05_portfolio_final", notebook="06")
 por_base, etapas, excluidos = colab.historico(pastas, FONTE)
