@@ -2,18 +2,12 @@
 
 Parte 1: referências de cada artigo pelo OpenAlex (`referenced_works`), as mais citadas pelo
 portfólio e a incorporação das que o pesquisador marcar como alinhadas (grupo "complementar").
-Parte 2: contagens, gráficos e redes (coautoria e coocorrência de palavras-chave).
-
-No Colab, o pyvis só desenha a rede com cdn_resources="in_line" (o padrão de `html_pyvis`);
-para exibir no notebook: `IPython.display.HTML(caminho.read_text(encoding="utf-8"))`.
+Parte 2: contagens e gráficos (periódicos, autores, palavras-chave e anos).
 """
 
 from collections import Counter
-from itertools import combinations
-from pathlib import Path
 
 import matplotlib.pyplot as plt
-import networkx as nx
 import pandas as pd
 import requests
 
@@ -165,60 +159,3 @@ def grafico_anos(tabela: pd.DataFrame):
     figura.tight_layout()
     return figura
 
-
-def _rede_coocorrencia(listas, minimo=1) -> nx.Graph:
-    """Nós com atributo `artigos` (em quantos aparecem); arestas com `peso` (quantos compartilham)."""
-    listas = [sorted(set(itens)) for itens in listas if itens is not None]
-    ocorrencias = Counter(item for itens in listas for item in itens)
-    grafo = nx.Graph()
-    for item, quantidade in ocorrencias.items():
-        if quantidade >= minimo:
-            grafo.add_node(item, artigos=quantidade)
-    for itens in listas:
-        for a, b in combinations([i for i in itens if i in grafo], 2):
-            peso = grafo.edges[a, b]["peso"] + 1 if grafo.has_edge(a, b) else 1
-            grafo.add_edge(a, b, peso=peso)
-    return grafo
-
-
-def rede_coautoria(tabela: pd.DataFrame, minimo=1) -> nx.Graph:
-    """Rede de coautoria; `minimo` é o número mínimo de artigos para o autor aparecer."""
-    return _rede_coocorrencia(tabela["autores"], minimo)
-
-
-def rede_palavras_chave(tabela: pd.DataFrame, minimo=1) -> nx.Graph:
-    """Rede de coocorrência de palavras-chave; `minimo` é o número mínimo de artigos com a palavra."""
-    return _rede_coocorrencia(tabela["palavras_chave"], minimo)
-
-
-def html_pyvis(grafo: nx.Graph, caminho, cdn_resources="in_line") -> Path:
-    """Grava a rede interativa em HTML. Mantenha cdn_resources="in_line" no Colab."""
-    from pyvis.network import Network
-
-    rede = Network(height="600px", width="100%", cdn_resources=cdn_resources)
-    for no, dados in grafo.nodes(data=True):
-        rede.add_node(no, label=no, value=dados["artigos"], title=f"{no}: {dados['artigos']} artigo(s)")
-    for a, b, dados in grafo.edges(data=True):
-        rede.add_edge(a, b, value=dados["peso"], title=f"{dados['peso']} artigo(s) em comum")
-    caminho = Path(caminho)
-    caminho.parent.mkdir(parents=True, exist_ok=True)
-    caminho.write_text(rede.generate_html(), encoding="utf-8")
-    return caminho
-
-
-def exportar_vosviewer(grafo: nx.Graph, pasta, nome: str):
-    """Grava os arquivos de mapa e de rede do VOSviewer (texto tabulado). Devolve (mapa, rede).
-
-    No VOSviewer: Create > Create a map based on network data > VOSviewer map/network file.
-    """
-    pasta = Path(pasta)
-    pasta.mkdir(parents=True, exist_ok=True)
-    ids = {no: n for n, no in enumerate(grafo.nodes, start=1)}
-    mapa = pasta / f"{nome}_mapa.txt"
-    rede = pasta / f"{nome}_rede.txt"
-    linhas = ["id\tlabel\tweight<Artigos>"]
-    linhas += [f"{ids[no]}\t{no}\t{dados['artigos']}" for no, dados in grafo.nodes(data=True)]
-    mapa.write_text("\n".join(linhas) + "\n", encoding="utf-8")
-    linhas = [f"{ids[a]}\t{ids[b]}\t{dados['peso']}" for a, b, dados in grafo.edges(data=True)]
-    rede.write_text("\n".join(linhas) + "\n" if linhas else "", encoding="utf-8")
-    return mapa, rede

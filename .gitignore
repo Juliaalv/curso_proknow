@@ -6,3 +6,7 @@ __pycache__/
 venv/
 CLAUDE.md
 graphify-out/
+
+# Saídas locais dos notebooks e do pip install -e
+notebooks/curso_proknowc*/
+*.egg-info/

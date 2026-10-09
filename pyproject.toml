@@ -14,8 +14,6 @@ dependencies = [
     "rapidfuzz",
     "requests",
     "matplotlib",
-    "networkx",
-    "pyvis",
     "ipywidgets",
     "scikit-learn",
 ]

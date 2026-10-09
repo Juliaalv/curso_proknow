@@ -133,7 +133,31 @@ def _texto(artigo, etapa):
         resumo = artigo.get("resumo")
         resumo = "(sem resumo)" if resumo is None or pd.isna(resumo) else str(resumo)
         partes.append(f"<p>{html.escape(resumo)}</p>")
+    if etapa == "texto":
+        partes.append(_links_texto_completo(artigo))
     return "".join(partes)
+
+
+def _preenchido(valor) -> bool:
+    return valor is not None and not pd.isna(valor) and str(valor).strip() != ""
+
+
+def _link(url, rotulo):
+    url = html.escape(str(url).strip(), quote=True)
+    return f'{rotulo}: <a href="{url}" target="_blank">{url}</a>'
+
+
+def _links_texto_completo(artigo):
+    """Orienta a leitura fora do notebook: o texto completo é lido na base, aqui só se registra."""
+    linhas = ["<i>Leia o texto completo fora do notebook, na base de dados ou no site da revista, "
+              "e registre aqui a sua decisão.</i>"]
+    if _preenchido(artigo.get("doi")):
+        linhas.append(_link(f"https://doi.org/{str(artigo['doi']).strip()}", "DOI"))
+    if _preenchido(artigo.get("url_pdf")):
+        linhas.append(_link(artigo["url_pdf"], "PDF em acesso aberto"))
+    if _preenchido(artigo.get("buscar_capes")) and bool(artigo["buscar_capes"]):
+        linhas.append("Texto fechado: busque pelo Portal de Periódicos CAPES.")
+    return "<p>" + "<br>".join(linhas) + "</p>"
 
 
 def interface(tabela, etapa, caminho):

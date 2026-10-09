@@ -130,3 +130,27 @@ def test_interface_monta_e_registra_cliques(arquivo):
     assert triagem.progresso(tabela, "resumo", arquivo) == (1, 3)
     decisoes = triagem.carregar_decisoes(arquivo, "resumo")
     assert list(decisoes["motivo"]) == ["fora do tema"]
+
+
+def test_tela_do_texto_completo_orienta_a_ler_na_base():
+    artigo = pd.Series({"id": "R1", "titulo": "Wind", "resumo": "Resumo longo", "doi": "10.1/abc",
+                        "url_pdf": "https://repo.org/a.pdf", "buscar_capes": False})
+    tela = triagem._texto(artigo, "texto")
+    assert "Leia o texto completo" in tela
+    assert "Resumo longo" not in tela
+    assert 'href="https://doi.org/10.1/abc"' in tela
+    assert 'href="https://repo.org/a.pdf"' in tela
+    assert "CAPES" not in tela
+
+
+def test_tela_do_texto_completo_fechado_indica_capes():
+    artigo = pd.Series({"id": "R1", "titulo": "Wind", "doi": "10.1/abc", "url_pdf": None, "buscar_capes": True})
+    tela = triagem._texto(artigo, "texto")
+    assert "Portal de Periódicos CAPES" in tela
+    assert "PDF" not in tela
+
+
+def test_tela_do_texto_completo_sem_doi_nem_disponibilidade():
+    tela = triagem._texto(pd.Series({"id": "R1", "titulo": "Wind"}), "texto")
+    assert "Leia o texto completo" in tela
+    assert "doi.org" not in tela

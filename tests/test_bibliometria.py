@@ -153,34 +153,3 @@ def test_graficos_em_portugues():
     figura = bibliometria.grafico_anos(tabela)
     assert figura.axes[0].get_xlabel() == "Ano de publicação"
 
-
-def test_rede_de_coautoria():
-    grafo = bibliometria.rede_coautoria(_portfolio())
-    assert grafo.nodes["Silva, J."]["artigos"] == 2
-    assert grafo.has_edge("Silva, J.", "Santos, M.")
-    assert grafo.edges["Silva, J.", "Lima, P."]["peso"] == 1
-    assert "Costa, R." in grafo.nodes
-
-
-def test_rede_de_palavras_chave_com_minimo():
-    grafo = bibliometria.rede_palavras_chave(_portfolio(), minimo=2)
-    assert set(grafo.nodes) == {"lstm", "wind speed"}
-    assert grafo.edges["lstm", "wind speed"]["peso"] == 1
-
-
-def test_html_pyvis(tmp_path):
-    grafo = bibliometria.rede_coautoria(_portfolio())
-    caminho = bibliometria.html_pyvis(grafo, tmp_path / "rede.html")
-    conteudo = caminho.read_text(encoding="utf-8")
-    assert "Silva, J." in conteudo
-
-
-def test_exportar_vosviewer(tmp_path):
-    grafo = bibliometria.rede_coautoria(_portfolio())
-    mapa, rede = bibliometria.exportar_vosviewer(grafo, tmp_path, "coautoria")
-    linhas_mapa = mapa.read_text(encoding="utf-8").splitlines()
-    assert linhas_mapa[0] == "id\tlabel\tweight<Artigos>"
-    assert any(linha.endswith("\tSilva, J.\t2") for linha in linhas_mapa)
-    linhas_rede = rede.read_text(encoding="utf-8").splitlines()
-    assert len(linhas_rede) == grafo.number_of_edges()
-    assert all(len(linha.split("\t")) == 3 for linha in linhas_rede)

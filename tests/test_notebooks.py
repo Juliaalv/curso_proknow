@@ -27,7 +27,7 @@ def test_notebooks_rodam_em_sequencia_com_meus_arquivos(tmp_path):
     resultados = executar(ENTRADA, sem_rede=True, trabalho=tmp_path)
     for nome in ["02_padronizado", "03_alinhados_titulo", "04_portfolio", "05_portfolio_final"]:
         assert (resultados / f"{nome}.parquet").exists(), nome
-    for arquivo in ["fluxograma.png", "portfolio.ris", "portfolio.bib", "log_exclusoes.csv", "rede_coautoria.html"]:
+    for arquivo in ["fluxograma.png", "portfolio.ris", "portfolio.bib", "log_exclusoes.csv"]:
         assert (resultados / arquivo).exists(), arquivo
 
     historico = json.loads((resultados / "historico.json").read_text(encoding="utf-8"))

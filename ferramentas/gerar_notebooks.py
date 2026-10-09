@@ -10,8 +10,7 @@ from pathlib import Path
 
 import nbformat
 
-# Provisório: trocar pelo endereço público do repositório antes do curso (seção 11 do plano).
-REPOSITORIO = "https://github.com/SEU_USUARIO/curso_proknowc.git"
+REPOSITORIO = "https://github.com/Juliaalv/curso_proknow.git"
 
 PASTA = Path(__file__).resolve().parents[1] / "notebooks"
 ANO = date.today().year
@@ -61,7 +60,7 @@ def entrada(nome: str, notebook: str, variavel: str, padrao: str = "exemplo do c
     return formulario(
         "Entrada",
         f'''
-#@markdown **exemplo do curso**: começa do resultado já pronto do exemplo (previsão de velocidade do vento).
+#@markdown **exemplo do curso**: começa do resultado já pronto do exemplo (curtailment de eólica e solar).
 #@markdown **meus arquivos**: começa do resultado que você salvou no notebook anterior.{nota_email}
 FONTE = "{padrao}" #@param ["exemplo do curso", "meus arquivos"]{campo_email}
 {variavel} = colab.carregar(pastas, FONTE, "{nome}", notebook="{notebook}")
@@ -71,14 +70,16 @@ print(f"{{len({variavel})}} artigos carregados.")
 
 
 CAMPOS_EIXOS = '''
-#@markdown Separe os termos de um mesmo eixo com ponto e vírgula. Use * como curinga (ex.: forecast*). Deixe o eixo 3 em branco se não precisar dele.
-EIXO_1 = "Wind Speed" #@param {type:"string"}
-TERMOS_1 = "wind speed; wind velocity" #@param {type:"string"}
-EIXO_2 = "Forecasting" #@param {type:"string"}
-TERMOS_2 = "forecast*; prediction" #@param {type:"string"}
-EIXO_3 = "" #@param {type:"string"}
-TERMOS_3 = "" #@param {type:"string"}
-eixos = colab.ler_eixos([(EIXO_1, TERMOS_1), (EIXO_2, TERMOS_2), (EIXO_3, TERMOS_3)])
+#@markdown Separe os termos de um mesmo eixo com ponto e vírgula. Use * como curinga (ex.: curtail*). Deixe em branco os eixos que não precisar.
+EIXO_1 = "Curtailment" #@param {type:"string"}
+TERMOS_1 = "curtail*; constrained-off; dispatch-down" #@param {type:"string"}
+EIXO_2 = "Fontes renováveis (solar e eólica)" #@param {type:"string"}
+TERMOS_2 = "wind power; wind energy; wind farm*; photovoltaic*; solar power; solar energy; variable renewable*" #@param {type:"string"}
+EIXO_3 = "Soluções / mitigação" #@param {type:"string"}
+TERMOS_3 = "energy storage; battery energy storage system*; BESS; flexibility; demand response; hydrogen production; planned load growth" #@param {type:"string"}
+EIXO_4 = "Aspectos econômicos" #@param {type:"string"}
+TERMOS_4 = "econom*; cost*; revenue*; electricity market*; techno-economic; compensation; carbon targets" #@param {type:"string"}
+eixos = colab.ler_eixos([(EIXO_1, TERMOS_1), (EIXO_2, TERMOS_2), (EIXO_3, TERMOS_3), (EIXO_4, TERMOS_4)])
 '''
 
 SALVAR = 'BAIXAR_CSV = False #@param {type:"boolean"}'
@@ -125,7 +126,7 @@ Não precisa renomear: o que importa é a pasta.
         preparacao(),
         formulario("Leitura dos arquivos", '''
 #@markdown **meus arquivos**: os CSVs que você colocou em `curso_proknowc/entrada/` no Google Drive.
-#@markdown **exemplo do curso**: os CSVs de reserva do curso (tema previsão de velocidade do vento).
+#@markdown **exemplo do curso**: os CSVs de reserva do curso (tema curtailment de eólica e solar).
 FONTE = "meus arquivos" #@param ["meus arquivos", "exemplo do curso"]
 from curso_proknowc.leitura import ler_pasta
 tabela_bruta, arquivos = ler_pasta(colab.pasta_entrada(pastas, FONTE))
@@ -309,8 +310,13 @@ if EMAIL.strip():
 else:
     print("Preencha o EMAIL na célula de entrada e rode de novo para consultar o Unpaywall (ele exige um e-mail).")
 '''),
-        texto("## Leitura do texto completo\n\nLeia cada artigo completo. Se não conseguir o texto, rejeite e escreva o motivo (ex.: \"texto indisponível\")."),
-        formulario("Leitura do texto completo", '''
+        texto("""## Leitura do texto completo
+
+A leitura do texto completo é feita **fora do notebook**: abra cada artigo na base de dados, no site da revista,
+pelo link do PDF em acesso aberto ou pelo Portal de Periódicos CAPES (para os fechados). Depois de ler, volte aqui
+e registre a decisão. Se não conseguir o texto, rejeite e escreva o motivo (ex.: "texto indisponível")."""),
+        formulario("Registro da leitura do texto completo", '''
+#@markdown A tela mostra o título e os links de cada artigo; a leitura é feita na base. Aqui você só registra a decisão.
 display(triagem.interface(aprovados, "texto", decisoes))
 '''),
         formulario("Aplicar as decisões e salvar o portfólio (rode depois de terminar)", SALVAR + '''
@@ -375,17 +381,6 @@ for coluna in ["periodico", "autores", "palavras_chave"]:
     plt.show()
 bibliometria.grafico_anos(portfolio_final)
 plt.show()
-'''),
-        formulario("Redes de coautoria e de palavras-chave", '''
-#@markdown Mínimo de artigos para um autor ou palavra-chave aparecer na rede.
-MINIMO = 1 #@param {type:"integer"}
-for nome, rede in [("coautoria", bibliometria.rede_coautoria(portfolio_final, MINIMO)),
-                   ("palavras_chave", bibliometria.rede_palavras_chave(portfolio_final, MINIMO))]:
-    pagina = bibliometria.html_pyvis(rede, pastas.resultados / f"rede_{nome}.html")
-    bibliometria.exportar_vosviewer(rede, pastas.resultados / "vosviewer", nome)
-    print(f"Rede de {nome.replace('_', '-')}: {rede.number_of_nodes()} nós, {rede.number_of_edges()} ligações.")
-    display(HTML(pagina.read_text(encoding="utf-8")))
-print(f"Arquivos para o VOSviewer em {pastas.resultados / 'vosviewer'}.")
 '''),
     ]
 

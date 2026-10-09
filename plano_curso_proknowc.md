@@ -10,7 +10,7 @@ Documento de planejamento para desenvolver, no Claude Code, o material de um cur
 - **Material existente**: slides antigos cobrindo apenas a etapa de seleção do portfólio bibliográfico (problemática, definição, eixos e palavras-chave, bases, teste de aderência, filtragem, ferramentas). Exemplo usado nos slides: previsão de velocidade do vento (eixos "Wind Speed" e "Forecasting").
 - **Código existente**: nenhum a reaproveitar; as automações serão desenvolvidas do zero neste repositório.
 - **Premissa sobre as bases**: assume-se que os participantes **não conhecem as bases de dados científicas**. O curso apresenta todas as principais e suas características (seção 3.4). Os participantes são alunos da universidade e têm acesso ao Portal de Periódicos CAPES, portanto às bases assinadas.
-- **Tema da prática**: um tema comum para toda a turma, **previsão de velocidade do vento**.
+- **Tema da prática**: um tema comum para toda a turma, **curtailment de eólica e solar** (eixos: curtailment, fontes renováveis, soluções/mitigação e aspectos econômicos).
 - **Bases da prática**: **Scopus e IEEE Xplore**, no máximo. A instrutora demonstra ao vivo a busca e a exportação; em seguida, cada aluno entra manualmente nas duas bases (via Portal CAPES), faz a busca, baixa os CSVs e os coloca na pasta de entrada do curso, com uma subpasta por base (seção 8.1). A A2 lê e concatena tudo o que estiver nessa pasta. Como são duas bases com colunas e convenções diferentes, padronizar e tratar esses arquivos continua sendo parte obrigatória do fluxo, não um detalhe.
 - **Reserva**: o material traz os CSVs brutos exportados pela instrutora, na mesma estrutura de pastas, para quem não conseguir acessar as bases na aula.
 - **Objetivo adicional**: ir além do ProKnow-C clássico, trazendo técnicas que tornem a revisão mais profunda.
@@ -34,7 +34,7 @@ Ao final do curso, o participante será capaz de:
 ## 2. O que precisa ser produzido
 
 1. Notebooks (Google Colab) com as automações, usáveis sem ler código, cada um executável de forma independente (seção 8).
-2. Um conjunto de dados de exemplo do tema previsão de velocidade do vento: os CSVs brutos exportados da Scopus e da IEEE Xplore (com seus defeitos), organizados na mesma estrutura da pasta de entrada, e o resultado salvo de cada etapa, para que cada notebook possa começar do ponto certo.
+2. Um conjunto de dados de exemplo do tema curtailment de eólica e solar: os CSVs brutos exportados da Scopus e da IEEE Xplore (com seus defeitos), organizados na mesma estrutura da pasta de entrada, e o resultado salvo de cada etapa, para que cada notebook possa começar do ponto certo.
 3. Slides atualizados (esquema de cores azul), alinhados ao cronograma abaixo.
 4. Um guia curto para o participante (como abrir, preencher, executar e salvar resultados), incluindo o passo a passo ilustrado de acesso e exportação na Scopus e na IEEE Xplore e de como colocar os CSVs na pasta de entrada.
 
@@ -114,7 +114,7 @@ Os detalhes de exportação mudam com o tempo; conferir cada um antes do curso.
 - Evitar o par Scopus + ScienceDirect, pela grande sobreposição.
 - Sem acesso institucional: OpenAlex + SciELO ou DOAJ.
 
-**Demonstração ao vivo**: fazer a busca do exemplo (previsão de velocidade do vento) na Scopus e na IEEE Xplore, exportar os dois CSVs e abri-los lado a lado para mostrar que as colunas não batem. Esse contraste é a motivação para a automação A2.
+**Demonstração ao vivo**: fazer a busca do exemplo (curtailment de eólica e solar) na Scopus e na IEEE Xplore, exportar os dois CSVs e abri-los lado a lado para mostrar que as colunas não batem. Esse contraste é a motivação para a automação A2.
 
 **Atividade**: cada aluno repete a busca nas duas bases, baixa os CSVs, coloca cada um na subpasta da sua base (seção 8.1) e roda a A2. Quem não conseguir acessar usa os CSVs de reserva.
 
@@ -137,7 +137,7 @@ Os detalhes de exportação mudam com o tempo; conferir cada um antes do curso.
 | 1:25–1:50 | 25 | Aderência e filtragem I | Teste de aderência, duplicados, alinhamento de título (triagem demonstrada em poucos artigos) | A3, A4, A5 |
 | 1:50–2:05 | 15 | Intervalo | | |
 | 2:05–2:45 | 40 | Filtragem II | Reconhecimento científico, resumo, repescagem, disponibilidade, texto completo | A6, A7, A8 |
-| 2:45–3:20 | 35 | Representatividade e bibliometria | Teste de representatividade (fecha a seleção); periódicos, autores, palavras-chave, redes | A9 |
+| 2:45–3:20 | 35 | Representatividade e bibliometria | Teste de representatividade (fecha a seleção); periódicos, autores, palavras-chave e anos | A9 |
 | 3:20–3:45 | 25 | Além do ProKnow-C | Snowballing, InOrdinatio, síntese com LLM | B1, B2, B4 (demos curtas) |
 | 3:45–4:00 | 15 | Fechamento | Fluxograma e checklist PRISMA; ferramentas (Zotero, Mendeley); entrega dos notebooks; dúvidas | A10 |
 
@@ -245,8 +245,8 @@ Cada base tem um perfil que traduz suas colunas para o esquema comum. Perfis pro
 ### A9 — Representatividade e análise bibliométrica
 - **Entrada**: portfólio final.
 - **Parte 1 — Teste de representatividade** (último passo da seleção): obter as referências de cada artigo do portfólio pelo OpenAlex (`referenced_works`, consultado pelo DOI), listar as mais citadas pelo portfólio e marcar as alinhadas como grupo "complementar".
-- **Parte 2 — Bibliometria**: gráficos de periódicos, autores, ano de publicação e palavras-chave mais frequentes; redes de coautoria e de coocorrência de palavras-chave.
-- **Notas**: networkx + pyvis para as redes (testar a renderização do pyvis no Colab cedo); opção de exportar para o VOSviewer. O texto das referências exportado pelas bases fica em `referencias_texto` só como registro; não é usado para casar referências.
+- **Parte 2 — Bibliometria**: gráficos de periódicos, autores, ano de publicação e palavras-chave mais frequentes.
+- **Notas**: O texto das referências exportado pelas bases fica em `referencias_texto` só como registro; não é usado para casar referências.
 
 ### A10 — Rastreabilidade e relato PRISMA
 - **Entrada**: histórico das etapas.
@@ -337,7 +337,7 @@ Meu Drive/
 - **Idioma**: interface, mensagens e gráficos em português.
 - **Transparência**: toda etapa automática mostra o que removeu e por quê; nenhuma decisão de alinhamento é tomada pela ferramenta sem o pesquisador.
 
-Bibliotecas previstas: pandas, pyarrow, openpyxl, charset-normalizer, pyyaml, rapidfuzz, rispy, requests (ou pyalex), matplotlib/plotly, networkx, pyvis, ipywidgets, scikit-learn; opcionais: sentence-transformers, bertopic.
+Bibliotecas previstas: pandas, pyarrow, openpyxl, charset-normalizer, pyyaml, rapidfuzz, rispy, requests (ou pyalex), matplotlib/plotly, ipywidgets, scikit-learn; opcionais: sentence-transformers, bertopic.
 
 ## 9. Estrutura de repositório (proposta)
 
@@ -367,7 +367,7 @@ curso-proknowc/
 
 ## 10. Ordem de desenvolvimento sugerida
 
-1. Exportar da Scopus e da IEEE Xplore os CSVs reais do tema previsão de velocidade do vento.
+1. Exportar da Scopus e da IEEE Xplore os CSVs reais do tema curtailment de eólica e solar.
 2. Esquema da tabela, perfis Scopus e IEEE Xplore e leitura da pasta de entrada, concatenação, padronização e tratamento (A2), testados com esses CSVs (incluindo mais de um arquivo por base e um arquivo na pasta errada). É a base de todo o resto.
 3. A4 com fusão entre bases e relatório de sobreposição; depois A1 e A6.
 4. A9 e A10: fecham o fluxo com representatividade, gráficos e fluxograma.
@@ -376,7 +376,7 @@ curso-proknowc/
 7. Extensões B1 e B2 (baratas de implementar depois que a coleta existe); B4 e B3 com resultados pré-calculados.
 8. Perfis Web of Science e RIS genérico.
 9. Notebook de fluxo completo, guia do participante e slides.
-10. Ensaio cronometrado com o conjunto de exemplo, em uma conta Colab limpa, conferindo também: regras de acesso atuais do OpenAlex e do Unpaywall, renderização do pyvis e salvamento no Drive.
+10. Ensaio cronometrado com o conjunto de exemplo, em uma conta Colab limpa, conferindo também: regras de acesso atuais do OpenAlex e do Unpaywall e salvamento no Drive.
 
 ## 11. Decisões em aberto
 
